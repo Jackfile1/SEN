@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calm Corner</title>
+  <style>
+    :root {
+      --bg1: #0f0c29;
+      --bg2: #302b63;
+      --bg3: #24243e;
+      --text: #e0dff0;
+      --accent: #a78bfa;
+      --accent-bright: #c084fc;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3));
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      margin: 0;
+      padding: 2rem 1rem 6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    header, footer {
+      width: 100%;
+      text-align: center;
+      padding: 1rem;
+      background: rgba(15, 12, 40, 0.95);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    header h1, footer small {
+      color: var(--text);
+    }
+
+    main {
+      width: 100%;
+      max-width: 700px;
+      padding: 2rem;
+      background: rgba(20, 18, 40, 0.95);
+      border-radius: 1.5rem;
+      box-shadow: 0 0 30px rgba(167, 139, 250, 0.1);
+      text-align: center;
+    }
+
+    h2 {
+      color: var(--accent);
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .sound-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .sound-control {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #1e1c29;
+      border-radius: 1rem;
+      padding: 1rem;
+      border: 1px solid var(--accent);
+    }
+
+    .sound-control span {
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .sound-control button {
+      background: var(--accent);
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.75rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 0.5rem;
+    }
+
+    .sound-control button:hover {
+      background: var(--accent-bright);
+    }
+
+    .sound-control input[type="range"] {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+
+    .control-group {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: 1rem;
+    }
+
+    .control-group button {
+      width: 100%;
+      max-width: 200px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      background: var(--accent);
+      color: white;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .control-group button:hover {
+      background: var(--accent-bright);
+    }
+
+    .timer-box {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 1rem;
+      margin-top: 1rem;
+      font-size: 2rem;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 15px rgba(167, 139, 250, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(15, 12, 40, 0.95);
+      border-top: 1px solid #333;
+      display: flex;
+      justify-content: space-around;
+      padding: 0.5rem 0;
+      z-index: 1000;
+    }
+
+    .bottom-nav a {
+      text-decoration: none;
+      font-size: 1rem;
+      color: var(--accent);
+      flex: 1;
+      text-align: center;
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header><h1>Well-being App</h1></header>
+
+  <main>
+    <h2>Calm Corner</h2>
+    <p>Select one or more sounds to relax and unwind. You can play them together for a deeper experience.</p>
+
+    <div class="sound-grid">
+      <!-- Full list of sounds -->
+      <div class="sound-control">
+        <span>Birds</span>
+        <button onclick="toggleSound('birds', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="birds-volume" onchange="adjustVolume('birds')">
+      </div>
+
+      <div class="sound-control">
+        <span>Cat-purring</span>
+        <button onclick="toggleSound('cat-purring', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="cat-purring-volume" onchange="adjustVolume('cat-purring')">
+      </div>
+
+      <div class="sound-control">
+        <span>Fire-crackle</span>
+        <button onclick="toggleSound('fire-crackle', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="fire-crackle-volume" onchange="adjustVolume('fire-crackle')">
+      </div>
+
+      <div class="sound-control">
+        <span>Forrest</span>
+        <button onclick="toggleSound('forrest', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="forrest-volume" onchange="adjustVolume('forrest')">
+      </div>
+
+      <div class="sound-control">
+        <span>Gentle-ocean-waves</span>
+        <button onclick="toggleSound('gentle-ocean-waves', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="gentle-ocean-waves-volume" onchange="adjustVolume('gentle-ocean-waves')">
+      </div>
+
+      <div class="sound-control">
+        <span>Heavy-rain</span>
+        <button onclick="toggleSound('heavy-rain', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="heavy-rain-volume" onchange="adjustVolume('heavy-rain')">
+      </div>
+
+      <div class="sound-control">
+        <span>Pink-noise</span>
+        <button onclick="toggleSound('pink-noise', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="pink-noise-volume" onchange="adjustVolume('pink-noise')">
+      </div>
+
+      <div class="sound-control">
+        <span>Rain</span>
+        <button onclick="toggleSound('rain', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="rain-volume" onchange="adjustVolume('rain')">
+      </div>
+
+      <div class="sound-control">
+        <span>Rain-and-thunder</span>
+        <button onclick="toggleSound('rain-and-thunder', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="rain-and-thunder-volume" onchange="adjustVolume('rain-and-thunder')">
+      </div>
+
+      <div class="sound-control">
+        <span>River</span>
+        <button onclick="toggleSound('river', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="river-volume" onchange="adjustVolume('river')">
+      </div>
+
+      <div class="sound-control">
+        <span>Soft-brown-noise</span>
+        <button onclick="toggleSound('soft-brown-noise', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="soft-brown-noise-volume" onchange="adjustVolume('soft-brown-noise')">
+      </div>
+
+      <div class="sound-control">
+        <span>Sounds-of-nature</span>
+        <button onclick="toggleSound('sounds-of-nature', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="sounds-of-nature-volume" onchange="adjustVolume('sounds-of-nature')">
+      </div>
+
+      <div class="sound-control">
+        <span>Stream</span>
+        <button onclick="toggleSound('stream', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="stream-volume" onchange="adjustVolume('stream')">
+      </div>
+
+      <div class="sound-control">
+        <span>Water</span>
+        <button onclick="toggleSound('water', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="water-volume" onchange="adjustVolume('water')">
+      </div>
+
+      <div class="sound-control">
+        <span>White-noise</span>
+        <button onclick="toggleSound('white-noise', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="white-noise-volume" onchange="adjustVolume('white-noise')">
+      </div>
+
+      <div class="sound-control">
+        <span>Wind</span>
+        <button onclick="toggleSound('wind', this)">Play</button>
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="wind-volume" onchange="adjustVolume('wind')">
+      </div>
+    </div>
+
+    <!-- Timer and Stop All Sounds -->
+    <div class="control-group">
+      <label for="sound-timer">Set Timer (minutes):</label>
+      <input type="number" id="sound-timer" min="1" value="10">
+      <button onclick="startTimer()">Start Timer</button>
+      <button onclick="stopAllSounds()">Stop All Sounds</button>
+    </div>
+
+    <div class="timer-box" id="timer-display">00:00</div>
+  </main>
+
+  <footer><small>&copy; 2025 Your App Name</small></footer>
+
+  <nav class="bottom-nav">
+    <a href="index.html" aria-label="Home">Home</a>
+    <a href="profile.html" aria-label="Profile">Profile</a>
+    <a href="therapeutic-tools.html" aria-label="Therapeutic Tools">Tools</a>
+    <a href="calm-corner.html" aria-label="Calm Corner">Calm</a>
+  </nav>
+
+  <script>
+    const soundFiles = {
+      "birds": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Birds.mp3",
+      "cat-purring": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Cat-purring.mp3",
+      "fire-crackle": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Fire-crackle.mp3",
+      "forrest": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Forrest.mp3",
+      "gentle-ocean-waves": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Gentle-ocean-waves.mp3",
+      "heavy-rain": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Heavy-rain.mp3",
+      "pink-noise": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Pink-noise.mp3",
+      "rain": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Rain.mp3",
+      "rain-and-thunder": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Rain-and-thunder.mp3",
+      "river": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/River.mp3",
+      "soft-brown-noise": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Soft-brown-noise.mp3",
+      "sounds-of-nature": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Sounds-of-nature.mp3",
+      "stream": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Stream.mp3",
+      "water": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Water.mp3",
+      "white-noise": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/White-noise.mp3",
+      "wind": "C:/Users/Gr00c/OneDrive/Desktop/SENdev/sounds/Wind.mp3"
+    };
+
+    const audioElements = {};
+
+    for (const [key, src] of Object.entries(soundFiles)) {
+      const audio = new Audio(src);
+      audio.loop = true;
+      audio.volume = 0.6;
+      audioElements[key] = audio;
+    }
+
+    function toggleSound(name, btn) {
+      const audio = audioElements[name];
+      if (audio.paused) {
+        audio.play();
+        btn.textContent = "Pause";
+      } else {
+        audio.pause();
+        btn.textContent = "Play";
+      }
+    }
+
+    function adjustVolume(name) {
+      const volume = document.getElementById(`${name}-volume`).value;
+      audioElements[name].volume = volume;
+    }
+
+    let timerInterval;
+
+    function startTimer() {
+      const timerValue = document.getElementById('sound-timer').value * 60 * 1000; // Convert minutes to ms
+      const timerDisplay = document.getElementById('timer-display');
+      
+      let remainingTime = timerValue;
+      timerInterval = setInterval(() => {
+        remainingTime -= 1000;
+        const minutes = Math.floor(remainingTime / 60000);
+        const seconds = Math.floor((remainingTime % 60000) / 1000);
+        timerDisplay.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        if (remainingTime <= 0) {
+          clearInterval(timerInterval);
+          stopAllSounds();
+          alert('Timer ended, all sounds stopped.');
+        }
+      }, 1000);
+    }
+
+    function stopAllSounds() {
+      Object.values(audioElements).forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        document.getElementById('timer-display').textContent = '00:00';
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

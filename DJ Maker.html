@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DJ Maker - Therapeutic Tools</title>
+  <style>
+    :root {
+      --bg1: #0f0c29;
+      --bg2: #302b63;
+      --bg3: #24243e;
+      --text: #e0dff0;
+      --accent: #a78bfa;
+      --accent-bright: #c084fc;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3));
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      margin: 0;
+      padding: 2rem 1rem 6rem;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    h2 {
+      color: var(--accent);
+      text-align: center;
+    }
+    .turntable-placeholder {
+      width: 100%; max-width: 500px; height: 200px;
+      background: #1e1c29; border: 2px solid var(--accent);
+      border-radius: 1rem; margin: 1rem auto;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent); font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .soundboard, .timeline {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      margin: 1rem 0; justify-content: center;
+    }
+    .timeline {
+      border: 2px dashed var(--accent);
+      padding: 1rem; min-height: 100px; width: 100%; max-width: 900px;
+      box-sizing: border-box;
+    }
+    .sound-item {
+      background: #1e1c29; border: 1px solid var(--accent);
+      border-radius: 1rem; padding: 1rem;
+      text-align: center; width: 140px;
+      cursor: grab; box-sizing: border-box;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+    .sound-item:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+    }
+    .sound-item.drag-over {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px dashed var(--accent-bright);
+    }
+    .sound-item.playing {
+      border-color: var(--accent-bright);
+      box-shadow: 0 0 10px var(--accent-bright);
+    }
+    .drag-handle {
+      cursor: grab;
+      font-size: 1.2rem;
+      margin-bottom: 0.25rem;
+      color: var(--accent);
+    }
+    .sound-item button {
+      margin-top: 0.5rem; width: 100%;
+    }
+    .progress-bar {
+      height: 6px;
+      background: var(--accent);
+      margin-top: 6px;
+      width: 0%;
+      transition: width 0.1s;
+    }
+    .volume-slider {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+    .controls {
+      display: flex; flex-wrap: wrap;
+      justify-content: center; gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .controls button {
+      background: var(--accent); color: white;
+      border: none; padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      cursor: pointer; flex: 1 1 40%; max-width: 200px;
+      transition: background 0.2s;
+    }
+    .controls button:disabled {
+      background: #555; cursor: not-allowed;
+    }
+    .controls button:active {
+      background: var(--accent-bright);
+    }
+    @media (max-width: 600px) {
+      .sound-item { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <h2>DJ Maker</h2>
+  <p>Drag sounds to the timeline to create your mix!</p>
+  <div class="turntable-placeholder" onclick="triggerScratch()">🎧 DJ Turntables (Touch to Scratch!)</div>
+  <div class="soundboard" id="soundboard"></div>
+  <h3>Timeline</h3>
+  <div class="timeline" id="timeline"></div>
+  <div class="controls">
+    <button id="playBtn" type="button">Play Timeline</button>
+    <button id="pauseBtn" type="button">Pause</button>
+    <button id="clearBtn" type="button">Clear</button>
+  </div>
+
+  <script>
+    const basePath = "./DJ/";
+    const scratchSounds = ["dj-scratch", "scratch", "scratch2"];
+    const soundList = [
+      "beat-of-time", "beats", "break-boom", "cool-drum", "dholki",
+      "dj-scratch", "dj-scratch2", "drum-beat", "drum-loop", "drum-loop-beat",
+      "hip-hop", "modern-soul-drum", "pop-rock-beat", "pop-rock-dry",
+      "pop-rock-dry2", "pop-rock-dry-room3", "reverb-reverse-scratch",
+      "scar", "scratch", "scratch2", "scratch-95", "single-drum",
+      "airhorn", "babyscratch"
+    ];
+
+    const soundboard = document.getElementById("soundboard");
+    const timeline = document.getElementById("timeline");
+    const playBtn = document.getElementById("playBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    let timelineQueue = [];
+    let currentIndex = 0;
+    let currentAudio = null;
+    let loopAudios = [];
+    let isPlaying = false;
+
+    playBtn.addEventListener("click", playTimeline);
+    pauseBtn.addEventListener("click", () => {
+      if (currentAudio) currentAudio.pause();
+      loopAudios.forEach(a => a.pause());
+      isPlaying = false;
+      playBtn.disabled = false;
+    });
+    clearBtn.addEventListener("click", () => {
+      stopAll();
+      timelineQueue = [];
+      renderTimeline();
+    });
+
+    const soundElements = {};
+
+    soundList.forEach(name => {
+      const div = document.createElement("div");
+      div.className = "sound-item";
+      div.draggable = true;
+
+      const audio = new Audio(basePath + name + ".mp3");
+      soundElements[name] = audio;
+
+      const playBtn = document.createElement("button");
+      playBtn.textContent = "▶ Play";
+      playBtn.onclick = () => {
+        audio.currentTime = 0;
+        audio.play();
+      };
+
+      const stopBtn = document.createElement("button");
+      stopBtn.textContent = "⏹ Stop";
+      stopBtn.onclick = () => {
+        audio.pause();
+        audio.currentTime = 0;
+      };
+
+      const volumeSlider = document.createElement("input");
+      volumeSlider.type = "range";
+      volumeSlider.min = 0;
+      volumeSlider.max = 1;
+      volumeSlider.step = 0.01;
+      volumeSlider.value = 0.8;
+      volumeSlider.className = "volume-slider";
+      volumeSlider.oninput = () => {
+        audio.volume = parseFloat(volumeSlider.value);
+      };
+
+      div.innerHTML = `<div class="drag-handle">≡</div><div>${name}</div>`;
+      div.appendChild(playBtn);
+      div.appendChild(stopBtn);
+      div.appendChild(volumeSlider);
+      div.addEventListener("dragstart", e => e.dataTransfer.setData("text/plain", name));
+      soundboard.appendChild(div);
+    });
+
+    timeline.addEventListener("dragover", e => e.preventDefault());
+    timeline.addEventListener("drop", e => {
+      const name = e.dataTransfer.getData("text/plain");
+      if (name) {
+        timelineQueue.push({ name, loop: false });
+        renderTimeline();
+      }
+    });
+
+    function renderTimeline() {
+      timeline.innerHTML = "";
+      timelineQueue.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "sound-item";
+        div.draggable = true;
+        div.innerHTML = `
+          <div class="drag-handle">≡</div>
+          <div>${item.name}</div>
+          <label><input type="checkbox" onchange="timelineQueue[${index}].loop=this.checked"> Loop</label>
+          <div class="progress-bar"></div>
+          <div class="visualizer" id="viz-${index}" style="height:6px;background:#555;margin-top:4px;"></div>
+        `;
+        div.addEventListener("dragstart", e => e.dataTransfer.setData("timeline-index", index));
+        div.addEventListener("drop", e => {
+          const from = parseInt(e.dataTransfer.getData("timeline-index"));
+          if (!isNaN(from) && from !== index) {
+            const moved = timelineQueue.splice(from, 1)[0];
+            timelineQueue.splice(index, 0, moved);
+            renderTimeline();
+          }
+        });
+        timeline.appendChild(div);
+      });
+    }
+
+    function stopAll() {
+      Object.values(soundElements).forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+      loopAudios.forEach(a => a.pause());
+      loopAudios = [];
+      isPlaying = false;
+      currentAudio = null;
+      currentIndex = 0;
+      playBtn.disabled = false;
+    }
+
+    function playTimeline() {
+      if (!timelineQueue.length || isPlaying) return;
+      stopAll();
+      isPlaying = true;
+      playBtn.disabled = true;
+      playNext();
+    }
+
+    function playNext() {
+      if (currentIndex >= timelineQueue.length) {
+        isPlaying = false;
+        playBtn.disabled = false;
+        return;
+      }
+
+      const item = timelineQueue[currentIndex];
+      const audio = new Audio(basePath + item.name + ".mp3");
+      audio.volume = 0.8;
+
+      const soundDiv = timeline.children[currentIndex];
+      const progress = soundDiv.querySelector(".progress-bar");
+      const visualizer = soundDiv.querySelector(".visualizer");
+      soundDiv.classList.add("playing");
+
+      if (item.loop) {
+        audio.loop = true;
+        loopAudios.push(audio);
+        audio.play();
+        currentIndex++;
+        playNext();
+        return;
+      }
+
+      currentAudio = audio;
+      audio.onloadedmetadata = () => {
+        const duration = audio.duration;
+        audio.play();
+
+        const interval = setInterval(() => {
+          if (!audio.paused) {
+            const percent = (audio.currentTime / duration) * 100;
+            progress.style.width = percent + "%";
+            visualizer.style.background = `linear-gradient(to right, var(--accent) ${percent}%, #555 ${percent}%)`;
+          }
+        }, 100);
+
+        audio.onended = () => {
+          clearInterval(interval);
+          progress.style.width = "0%";
+          visualizer.style.background = "#555";
+          soundDiv.classList.remove("playing");
+          currentIndex++;
+          playNext();
+        };
+      };
+    }
+
+    function triggerScratch() {
+      const sound = scratchSounds[Math.floor(Math.random() * scratchSounds.length)];
+      const audio = new Audio(basePath + sound + ".mp3");
+      audio.play();
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

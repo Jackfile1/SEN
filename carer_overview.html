@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carer Overview</title>
+  <style>
+    :root {
+      --bg1: #0f0c29;
+      --bg2: #302b63;
+      --bg3: #24243e;
+      --text: #e0dff0;
+      --accent: #a78bfa;
+      --accent-bright: #c084fc;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3));
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      margin: 0;
+      padding-bottom: 4rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      color: var(--text);
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    header, footer {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(15, 12, 40, 0.95);
+      color: var(--text);
+      width: 100%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    #carer-overview {
+      background: rgba(25, 20, 45, 0.9);
+      padding: 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 0 30px rgba(167, 139, 250, 0.1);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      overflow-y: auto;
+      max-height: 90vh;
+    }
+
+    h1, h2, label {
+      color: var(--accent);
+    }
+
+    input, select {
+      padding: 0.75rem;
+      font-size: 1rem;
+      width: 100%;
+      margin: 0.625rem 0;
+      border-radius: 0.5rem;
+      border: 1px solid #555;
+      box-sizing: border-box;
+      background-color: #1e1c29;
+      color: var(--text);
+    }
+
+    button {
+      background-color: var(--accent);
+      color: #fff;
+      padding: 0.625rem 0.875rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      margin: 0.3125rem 0.25rem;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--accent-bright);
+      transform: translateY(-0.125rem);
+    }
+
+    button:active {
+      transform: translateY(0.125rem);
+    }
+
+    .avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.625rem;
+      margin-top: 0.625rem;
+    }
+
+    .avatar-grid div {
+      font-size: 1.75rem;
+      cursor: pointer;
+      padding: 0.625rem;
+      border-radius: 0.625rem;
+      text-align: center;
+      background: #332c57;
+      color: var(--text);
+      border: 2px solid transparent;
+    }
+
+    .avatar-grid div:hover {
+      background: #403a5f;
+    }
+
+    .avatar-grid div.selected {
+      border-color: var(--accent);
+      background: rgba(255,255,255,0.1);
+    }
+
+    .child-list {
+      margin-top: 1.25rem;
+      text-align: left;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .child-list div {
+      margin-bottom: 0.625rem;
+      padding: 0.625rem;
+      border: 1px solid #555;
+      border-radius: 0.625rem;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .delete-btn {
+      background-color: #e63946;
+    }
+
+    .delete-btn:hover {
+      background-color: #d62839;
+    }
+
+    .view-analytics-btn {
+      background-color: #f9a825;
+    }
+
+    .view-analytics-btn:hover {
+      background-color: #e68900;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(15,12,40,0.95);
+      border-top: 1px solid #333;
+      display: flex;
+      justify-content: space-around;
+      padding: 0.5rem 0;
+      z-index: 1000;
+    }
+
+    .bottom-nav a {
+      text-decoration: none;
+      font-size: 1rem;
+      color: var(--accent);
+      flex: 1;
+      text-align: center;
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header><h1>Well-being App</h1></header>
+  <main>
+    <div id="carer-overview" role="main" aria-labelledby="carer-heading">
+      <h1 id="carer-heading">Carer Overview</h1>
+      <div class="form-section">
+        <h2>Add New Child Profile</h2>
+        <label for="child-name">Child's Name:</label>
+        <input type="text" id="child-name" placeholder="Enter child's name" required>
+        <label for="child-age">Child's Age:</label>
+        <input type="number" id="child-age" placeholder="Enter child's age" min="8" max="16" required>
+        <div class="avatar-options">
+          <label>Select an Avatar:</label>
+          <div class="avatar-grid" id="avatar-grid"></div>
+        </div>
+        <button onclick="saveNewProfile()">Save Profile</button>
+      </div>
+      <h2>Existing Children Profiles:</h2>
+      <div class="child-list" id="children-list"></div>
+      <button onclick="window.location.href='index.html'">Log Out</button>
+    </div>
+  </main>
+  <footer><small>&copy; 2025 Your App Name</small></footer>
+  <nav class="bottom-nav">
+    <a href="index.html">Home</a>
+    <a href="profile.html">Profile</a>
+    <a href="therapeutic-tools.html">Tools</a>
+    <a href="calm-corner.html">Calm</a>
+  </nav>
+  <script>
+    let selectedAvatar = '';
+    const avatarList = ['🎧','⚽','🌟','🎮','🚲','🏀','👨‍🚀','🧩','🎨','📚','🛹','🐴','🏊','🚀'];
+    function populateAvatarGrid(containerId = 'avatar-grid', clickHandler = selectAvatar) {
+      const grid = document.getElementById(containerId);
+      grid.innerHTML = '';
+      avatarList.forEach(avatar => {
+        const div = document.createElement('div');
+        div.textContent = avatar;
+        div.onclick = () => clickHandler(div, avatar);
+        grid.appendChild(div);
+      });
+    }
+    function selectAvatar(element, avatar) {
+      selectedAvatar = avatar;
+      document.querySelectorAll('#avatar-grid div').forEach(div => div.classList.remove('selected'));
+      element.classList.add('selected');
+    }
+    function saveNewProfile() {
+      const name = document.getElementById('child-name').value;
+      const age = document.getElementById('child-age').value;
+      if (!name || !age || !selectedAvatar) {
+        alert("Please fill in all fields and select an avatar!");
+        return;
+      }
+      const existingProfiles = JSON.parse(localStorage.getItem('children')) || [];
+      if (existingProfiles.some(child => child.name.toLowerCase() === name.toLowerCase())) {
+        alert("This name is already taken. Please choose a different name.");
+        return;
+      }
+      const newProfile = { name, age, avatar: selectedAvatar, feeling: '', logs: [] };
+      existingProfiles.push(newProfile);
+      localStorage.setItem('children', JSON.stringify(existingProfiles));
+      alert("Profile added successfully!");
+      loadChildren();
+    }
+    function viewProfile(name) {
+      localStorage.setItem('childName', name);
+      window.location.href = 'profile.html';
+    }
+    function confirmDeleteProfile(name) {
+      if (confirm(`Are you sure you want to delete the profile for ${name}?`)) {
+        const children = JSON.parse(localStorage.getItem('children')) || [];
+        const updated = children.filter(child => child.name !== name);
+        localStorage.setItem('children', JSON.stringify(updated));
+        loadChildren();
+      }
+    }
+    function editChild(index, name) {
+      const children = JSON.parse(localStorage.getItem('children')) || [];
+      const child = children.find(c => c.name === name);
+      if (!child) return;
+      const newName = prompt("Edit name:", child.name);
+      if (!newName) return;
+      const newAge = prompt("Edit age:", child.age);
+      if (!newAge) return;
+      child.name = newName;
+      child.age = newAge;
+      localStorage.setItem('children', JSON.stringify(children));
+      loadChildren();
+    }
+    function openAvatarGrid(index, childName) {
+      const gridId = `edit-avatar-grid-${index}`;
+      const grid = document.getElementById(gridId);
+      grid.innerHTML = '';
+      avatarList.forEach(avatar => {
+        const div = document.createElement('div');
+        div.textContent = avatar;
+        div.onclick = () => {
+          const children = JSON.parse(localStorage.getItem('children')) || [];
+          const child = children.find(c => c.name === childName);
+          if (child) {
+            child.avatar = avatar;
+            localStorage.setItem('children', JSON.stringify(children));
+            document.getElementById(`avatar-${index}`).textContent = avatar;
+            grid.style.display = 'none';
+          }
+        };
+        grid.appendChild(div);
+      });
+      grid.style.display = 'grid';
+    }
+    function loadChildren() {
+      const children = JSON.parse(localStorage.getItem('children')) || [];
+      const listContainer = document.getElementById('children-list');
+      listContainer.innerHTML = '';
+      children.forEach((child, index) => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <p><strong>Name:</strong> ${child.name}</p>
+          <p><strong>Age:</strong> ${child.age}</p>
+          <p><strong>Avatar:</strong> <span id="avatar-${index}">${child.avatar}</span></p>
+          <button onclick="viewProfile('${child.name}')">View Profile</button>
+          <button onclick="editChild(${index}, '${child.name}')">Edit Profile</button>
+          <button class="delete-btn" onclick="confirmDeleteProfile('${child.name}')">Delete Profile</button>
+          <button onclick="openAvatarGrid(${index}, '${child.name}')">Change Avatar</button>
+          <button class="view-analytics-btn" onclick="window.location.href='analytics.html'">View Analytics</button>
+          <div class="avatar-grid" id="edit-avatar-grid-${index}" style="display:none; margin-top:0.625rem;"></div>
+        `;
+        listContainer.appendChild(div);
+      });
+    }
+    window.onload = () => {
+      loadChildren();
+      populateAvatarGrid();
+    };
+  </script>
+</body>
+</html>
+

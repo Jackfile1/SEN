@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics Overview</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg1: #0f0c29;
+      --bg2: #302b63;
+      --bg3: #24243e;
+      --text: #e0dff0;
+      --accent: #a78bfa;
+      --accent-bright: #c084fc;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3));
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      margin: 0;
+      padding-bottom: 4rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      color: var(--text);
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    header, footer {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(15, 12, 40, 0.95);
+      width: 100%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    main {
+      flex: 1;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    #analytics-page {
+      background: rgba(25, 20, 45, 0.9);
+      padding: 2rem;
+      border-radius: 1.25rem;
+      box-shadow: 0 0 30px rgba(167, 139, 250, 0.1);
+      width: 90%;
+      max-width: 700px;
+    }
+    h2 {
+      font-size: 1.75rem;
+      color: var(--accent);
+      font-family: 'Montserrat', sans-serif;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+    label, select {
+      font-size: 1rem;
+      margin-bottom: 0.9375rem;
+      display: block;
+      width: 100%;
+    }
+    select {
+      padding: 0.625rem;
+      border-radius: 0.625rem;
+      border: 1px solid #555;
+      background-color: #1e1c29;
+      color: var(--text);
+    }
+    .log-card {
+      background: rgba(255,255,255,0.05);
+      padding: 0.9375rem;
+      border-radius: 0.625rem;
+      margin: 0.625rem 0;
+      font-size: 0.875rem;
+      border: 1px solid var(--accent);
+    }
+    .timeline { margin-top: 1.25rem; }
+    .timeline-month { margin-bottom: 0.9375rem; }
+    .timeline-month h3 {
+      margin-bottom: 0.625rem;
+      color: var(--accent);
+      cursor: pointer;
+    }
+    .timeline-month.collapsed .log-card { display: none; }
+    .navigation-buttons { margin-top: 1.875rem; text-align: center; }
+    .navigation-buttons button, .app-button {
+      padding: 0.75rem 1.25rem;
+      border: none;
+      border-radius: 0.625rem;
+      font-size: 1rem;
+      background-color: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      margin-top: 0.625rem;
+    }
+    .navigation-buttons button:hover, .app-button:hover {
+      background-color: var(--accent-bright);
+    }
+    #preview-section {
+      display: none;
+      margin-top: 1.25rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #555;
+      padding: 1.25rem;
+      border-radius: 0.625rem;
+      max-height: 25rem;
+      overflow-y: auto;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 1.25rem;
+      background-color: #1e1c29;
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(15, 12, 40, 0.95);
+      border-top: 1px solid #333;
+      display: flex;
+      justify-content: space-around;
+      padding: 0.5rem 0;
+      z-index: 1000;
+    }
+    .bottom-nav a {
+      text-decoration: none;
+      font-size: 1rem;
+      color: var(--accent);
+      flex: 1;
+      text-align: center;
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header><h1>Well-being App</h1></header>
+  <main>
+    <div id="analytics-page" role="main" aria-labelledby="analytics-heading">
+      <h2 id="analytics-heading">Analytics Overview</h2>
+      <label for="child-select">Select a Child:</label>
+      <select id="child-select"></select>
+      <label for="filter-mood">Filter by Mood:</label>
+      <select id="filter-mood"><option value="">All Moods</option></select>
+      <label for="filter-activity">Filter by Activity:</label>
+      <select id="filter-activity"><option value="">All Activities</option></select>
+      <div id="analytics-content"></div>
+      <canvas id="moodChart"></canvas>
+      <canvas id="activityChart"></canvas>
+      <button class="app-button" id="show-preview-button" onclick="showPreview()">Preview</button>
+      <button class="app-button" id="export-button" onclick="exportAnalytics()">Export/Print</button>
+      <div id="preview-section"></div>
+      <div class="navigation-buttons">
+        <button onclick="window.location.href='index.html'">← Back to Home</button>
+      </div>
+    </div>
+  </main>
+  <footer><small>&copy; 2025 Your App Name</small></footer>
+  <nav class="bottom-nav">
+    <a href="index.html">Home</a>
+    <a href="profile.html">Profile</a>
+    <a href="therapeutic-tools.html">Tools</a>
+    <a href="calm-corner.html">Calm</a>
+  </nav>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const children = JSON.parse(localStorage.getItem('children')) || [];
+    const childSelect = document.getElementById('child-select');
+    const moodFilter = document.getElementById('filter-mood');
+    const activityFilter = document.getElementById('filter-activity');
+    const analyticsContainer = document.getElementById('analytics-content');
+    let moodChartInstance, activityChartInstance;
+    const moodIcons = { happy: '😊', sad: '😢', angry: '😠', excited: '😆', calm: '😌', nervous: '😬', bored: '😒' };
+    children.forEach(child => {
+      const option = document.createElement('option');
+      option.value = child.name;
+      option.textContent = child.name;
+      childSelect.appendChild(option);
+    });
+    childSelect.addEventListener('change', () => { populateFilters(); showAnalytics(); });
+    moodFilter.addEventListener('change', showAnalytics);
+    activityFilter.addEventListener('change', showAnalytics);
+
+    function populateFilters() {
+      moodFilter.innerHTML = '<option value="">All Moods</option>';
+      activityFilter.innerHTML = '<option value="">All Activities</option>';
+      const selected = childSelect.value;
+      const child = children.find(c => c.name === selected);
+      const moods = new Set();
+      const activities = new Set();
+      if (!child || !child.logs) return;
+      child.logs.forEach(log => {
+        moods.add(log.feeling);
+        log.activities.forEach(a => activities.add(a));
+      });
+      moods.forEach(mood => {
+        const opt = document.createElement('option');
+        opt.value = mood;
+        opt.textContent = mood;
+        moodFilter.appendChild(opt);
+      });
+      activities.forEach(act => {
+        const opt = document.createElement('option');
+        opt.value = act;
+        opt.textContent = act;
+        activityFilter.appendChild(opt);
+      });
+    }
+
+    function toggleMonthSection(e) {
+      const parent = e.target.closest('.timeline-month');
+      parent.classList.toggle('collapsed');
+    }
+
+    function showAnalytics() {
+      const selected = childSelect.value;
+      const moodF = moodFilter.value;
+      const activityF = activityFilter.value;
+      const child = children.find(c => c.name === selected);
+      analyticsContainer.innerHTML = '';
+      if (!child || !child.logs || child.logs.length === 0) {
+        analyticsContainer.innerHTML = '<p>No log data found for this child.</p>';
+        return;
+      }
+      const moodCount = {}, activityCount = {}, grouped = {};
+      child.logs.forEach(log => {
+        if ((moodF && log.feeling !== moodF) || (activityF && !log.activities.includes(activityF))) return;
+        const date = new Date(log.date);
+        const monthKey = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+        if (!grouped[monthKey]) grouped[monthKey] = [];
+        grouped[monthKey].push(log);
+        moodCount[log.feeling] = (moodCount[log.feeling] || 0) + 1;
+        log.activities.forEach(act => activityCount[act] = (activityCount[act] || 0) + 1);
+      });
+      const timeline = document.createElement('div');
+      timeline.className = 'timeline';
+      for (const month in grouped) {
+        const section = document.createElement('div');
+        section.className = 'timeline-month';
+        const header = document.createElement('h3');
+        header.textContent = month;
+        header.addEventListener('click', toggleMonthSection);
+        section.appendChild(header);
+        const monthLogs = grouped[month];
+        const moodMap = {}, activityMap = {};
+        monthLogs.forEach(log => {
+          moodMap[log.feeling] = (moodMap[log.feeling] || 0) + 1;
+          log.activities.forEach(act => activityMap[act] = (activityMap[act] || 0) + 1);
+        });
+        const topMood = Object.keys(moodMap).sort((a, b) => moodMap[b] - moodMap[a])[0];
+        const topActivity = Object.keys(activityMap).sort((a, b) => activityMap[b] - activityMap[a])[0];
+        const summary = document.createElement('p');
+        summary.innerHTML = `<em>Most common mood: <strong>${topMood}</strong> | Most common activity: <strong>${topActivity}</strong></em>`;
+        section.appendChild(summary);
+        monthLogs.forEach(log => {
+          const logEl = document.createElement('div');
+          logEl.className = 'log-card';
+          const tag = log.activities.length > 1 ? '🌀 Multiple Activities' : '';
+          logEl.innerHTML = `
+            <p><strong>Date:</strong> ${new Date(log.date).toLocaleDateString('en-GB')}</p>
+            <p><strong>Feeling:</strong> ${moodIcons[log.feeling] || ''} ${log.feeling}</p>
+            <p><strong>Activities:</strong> ${log.activities.join(', ')} ${tag}</p>
+            ${log.activityComment.trim() ? `<p><strong>Comment:</strong> ${log.activityComment}</p>` : ''}
+          `;
+          section.appendChild(logEl);
+        });
+        timeline.appendChild(section);
+      }
+      analyticsContainer.appendChild(timeline);
+      if (moodChartInstance) moodChartInstance.destroy();
+      if (activityChartInstance) activityChartInstance.destroy();
+      moodChartInstance = new Chart(document.getElementById('moodChart'), {
+        type: 'pie',
+        data: {
+          labels: Object.keys(moodCount),
+          datasets: [{
+            label: 'Mood Distribution',
+            data: Object.values(moodCount),
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#66BB6A', '#BA68C8']
+          }]
+        },
+        options: { responsive: true }
+      });
+      activityChartInstance = new Chart(document.getElementById('activityChart'), {
+        type: 'bar',
+        data: {
+          labels: Object.keys(activityCount),
+          datasets: [{
+            label: 'Activity Frequency',
+            data: Object.values(activityCount),
+            backgroundColor: '#a78bfa'
+          }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+    }
+
+    function showPreview() {
+      const selected = childSelect.value;
+      if (!selected) {
+        alert("Please select a child first.");
+        return;
+      }
+      if (!analyticsContainer.innerHTML.trim()) { showAnalytics(); }
+      document.getElementById('preview-section').style.display = 'block';
+      document.getElementById('preview-section').innerHTML = analyticsContainer.innerHTML;
+    }
+
+    function exportAnalytics() {
+      const printContent = analyticsContainer.innerHTML;
+      const printWindow = window.open('', '', 'width=800,height=600');
+      printWindow.document.write('<html><head><title>Export Analytics</title>');
+      printWindow.document.write('<style>body{font-family:Poppins,sans-serif;padding:20px;color:#000;}h3{color:#4CAF50;}p{margin:5px 0;}</style>');
+      printWindow.document.write('</head><body>');
+      printWindow.document.write('<h2>Analytics Overview</h2>');
+      printWindow.document.write(printContent);
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.print();
+    }
+
+    window.onload = populateFilters;
+  </script>
+</body>
+</html>

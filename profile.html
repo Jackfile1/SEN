@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Child Profile Page</title>
+  <style>
+    :root {
+      --bg1: #0f0c29;
+      --bg2: #302b63;
+      --bg3: #24243e;
+      --text: #e0dff0;
+      --accent: #a78bfa;
+      --accent-bright: #c084fc;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3));
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      margin: 0;
+      padding: 2rem 1rem 6rem;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      color: var(--text);
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    #profile-page {
+      background-color: rgba(20, 18, 40, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 1.5rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 0 30px rgba(167, 139, 250, 0.2);
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+      text-align: center;
+    }
+
+    .avatar {
+      font-size: 3rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+
+    p {
+      font-size: 1rem;
+      margin: 0.5rem 0;
+      color: var(--text);
+      text-align: center;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      border: none;
+      background: #1e1c29;
+      color: var(--text);
+    }
+
+    button {
+      background: var(--accent);
+      color: white;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 1rem;
+      width: 100%;
+      margin-top: 0.75rem;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: var(--accent-bright);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    .log-entry, .log-list li {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--accent);
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .log-list li {
+      list-style: none;
+      font-size: 0.95rem;
+    }
+
+    .navigation-buttons {
+      margin-top: 2rem;
+    }
+
+    .navigation-buttons button {
+      background: #2b283a;
+    }
+
+    .navigation-buttons button:hover {
+      background: #40394f;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      background: #1e1c29;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      margin: 0.25rem 0;
+      border: 1px solid var(--accent);
+    }
+
+    .checkbox-group input {
+      margin-right: 0.5rem;
+    }
+
+    @media (max-width: 600px) {
+      h2 { font-size: 1.4rem; }
+      p, button { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="profile-page">
+    <h2>Welcome, <span id="profile-name"></span>!</h2>
+    <div class="avatar"><span id="profile-avatar"></span></div>
+    <p>Your Age: <span id="profile-age"></span></p>
+    <p>Your Current Feeling: <span id="profile-feeling-text"></span></p>
+
+    <div class="log-entry">
+      <h3>Log Your Day</h3>
+      <label for="log-date">Date:</label>
+      <input type="date" id="log-date">
+
+      <label for="log-feeling">Mood:</label>
+      <select id="log-feeling">
+        <option value="happy">😊 Happy</option>
+        <option value="sad">😢 Sad</option>
+        <option value="angry">😠 Angry</option>
+        <option value="excited">😆 Excited</option>
+        <option value="calm">😌 Calm</option>
+        <option value="nervous">😬 Nervous</option>
+        <option value="bored">😒 Bored</option>
+      </select>
+
+      <div class="checkbox-group">
+        <label><input type="checkbox" value="football">⚽ Football</label>
+        <label><input type="checkbox" value="painting">🎨 Painting</label>
+        <label><input type="checkbox" value="video-games">🎮 Video Games</label>
+        <label><input type="checkbox" value="reading">📖 Reading</label>
+        <label><input type="checkbox" value="swimming">🏊 Swimming</label>
+        <label><input type="checkbox" value="crafts">✂️ Crafts</label>
+        <label><input type="checkbox" value="horse-riding">🐴 Horse Riding</label>
+        <label><input type="checkbox" value="skateboarding">🛹 Skateboarding</label>
+        <label><input type="checkbox" value="bmx">🚵 BMX</label>
+      </div>
+
+      <label for="activity-time">Activity Time:</label>
+      <input type="time" id="activity-time">
+
+      <label for="log-activity">Comment:</label>
+      <textarea id="log-activity" placeholder="Write your activity here..."></textarea>
+
+      <button onclick="saveLog()">Save Log</button>
+    </div>
+
+    <h3>Recent Logs</h3>
+    <ul id="log-list" class="log-list"></ul>
+
+    <div class="navigation-buttons">
+      <button onclick="window.location.href='index.html'">🏠 Home</button>
+      <button onclick="window.location.href='therapeutic-tools.html'">🧰 Therapeutic Tools</button>
+      <button onclick="window.location.href='calm-corner.html'">🌙 Calm Corner</button>
+    </div>
+  </div>
+
+  <script>
+    function saveLog() {
+      alert("Log saved!");
+    }
+
+    window.onload = function() {
+      const children = JSON.parse(localStorage.getItem('children')) || [];
+      const currentName = localStorage.getItem('childName');
+      const child = children.find(c => c.name === currentName);
+
+      if (child) {
+        document.getElementById('profile-name').textContent = child.name;
+        document.getElementById('profile-avatar').textContent = child.avatar || '🙂';
+        document.getElementById('profile-age').textContent = child.age;
+        document.getElementById('profile-feeling-text').textContent = child.feeling || 'Unknown';
+      } else {
+        document.getElementById('profile-name').textContent = "Guest";
+        document.getElementById('profile-avatar').textContent = "🙂";
+        document.getElementById('profile-age').textContent = "-";
+        document.getElementById('profile-feeling-text').textContent = "-";
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Breathing Exercise</title>
+  <style>
+    :root {
+      --bg1: #0f0c29;
+      --bg2: #302b63;
+      --bg3: #24243e;
+      --text: #e0dff0;
+      --accent: #a78bfa;
+      --accent-bright: #c084fc;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3));
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      margin: 0;
+      padding-bottom: 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--text);
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    header, footer {
+      width: 100%;
+      text-align: center;
+      padding: 1rem;
+      background: rgba(15, 12, 40, 0.95);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      width: 100%;
+    }
+
+    #exercise-container {
+      background: rgba(25, 20, 45, 0.9);
+      padding: 2rem;
+      border-radius: 1.25rem;
+      box-shadow: 0 10px 30px rgba(167, 139, 250, 0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      margin-bottom: 4rem;
+      position: relative;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      color: var(--accent);
+      font-family: 'Montserrat', sans-serif;
+      margin-bottom: 1.25rem;
+    }
+
+    #breathing-circle {
+      width: 9.375rem;
+      height: 9.375rem;
+      border-radius: 50%;
+      background-color: var(--accent);
+      margin: 2rem auto 1rem;
+      box-shadow: 0 0 1.875rem rgba(167, 139, 250, 0.5);
+      transform: scale(1);
+      transition: transform 4s ease-in-out, opacity 1s ease;
+      z-index: 1;
+    }
+
+    #instruction-text, #timer-text {
+      font-size: 1.125rem;
+      opacity: 1;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hidden {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+
+    button {
+      background-color: var(--accent);
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      border: none;
+      border-radius: 0.9375rem;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1.125rem;
+      margin-top: 1rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      z-index: 2;
+      position: relative;
+    }
+
+    button:hover {
+      background-color: var(--accent-bright);
+      transform: translateY(-0.125rem);
+      box-shadow: 0 10px 30px rgba(167, 139, 250, 0.2);
+    }
+
+    .customization {
+      margin-top: 1.5rem;
+      text-align: left;
+    }
+
+    .customization label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .customization select, .customization input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #666;
+      background: #1e1c29;
+      color: var(--text);
+    }
+
+    .timer {
+      font-size: 1.5rem;
+      color: var(--accent);
+      margin-top: 1rem;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(15, 12, 40, 0.95);
+      border-top: 1px solid #333;
+      display: flex;
+      justify-content: space-around;
+      padding: 0.5rem 0;
+      z-index: 1000;
+    }
+
+    .bottom-nav a {
+      text-decoration: none;
+      font-size: 1rem;
+      color: var(--accent);
+      flex: 1;
+      text-align: center;
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header><h1>Well-being App</h1></header>
+  <main>
+    <div id="exercise-container">
+      <h2>Breathing Exercise</h2>
+      <div id="instruction-text">Get ready...</div>
+      <div id="timer-text" class="timer">Time: 0s</div>
+      <div id="breathing-circle"></div>
+      <div class="customization">
+        <label for="cycle-count">Number of Cycles:</label>
+        <input type="number" id="cycle-count" min="1" max="10" value="3" />
+        <label for="voice-select">Voiceover:</label>
+        <select id="voice-select">
+          <option value="default">Default</option>
+          <option value="calm">Calm</option>
+          <option value="gentle">Gentle</option>
+        </select>
+      </div>
+      <button id="start-btn" onclick="startExercise()">Begin</button>
+      <button id="stop-btn" onclick="stopExercise()" style="display:none;">Stop</button>
+    </div>
+  </main>
+  <footer><small>&copy; 2025 Your App Name</small></footer>
+  <nav class="bottom-nav">
+    <a href="index.html">Home</a>
+    <a href="profile.html">Profile</a>
+    <a href="therapeutic-tools.html">Tools</a>
+    <a href="calm-corner.html">Calm</a>
+  </nav>
+  <script>
+    const instruction = document.getElementById('instruction-text');
+    const timer = document.getElementById('timer-text');
+    const circle = document.getElementById('breathing-circle');
+    const startBtn = document.getElementById('start-btn');
+    const stopBtn = document.getElementById('stop-btn');
+
+    const audioFiles = {
+      'getready': 'TTS/Get Ready.mp3',
+      'inhale': 'TTS/Inhale.mp3',
+      'hold': 'TTS/Hold.mp3',
+      'exhale': 'TTS/Exhale.mp3'
+    };
+
+    const sounds = {};
+    for (let key in audioFiles) {
+      const a = new Audio(audioFiles[key]);
+      a.preload = 'auto';
+      sounds[key] = a;
+    }
+
+    let cycle = 0;
+    let totalCycles = 3;
+    let isStopped = false;
+    let countdownInterval;
+
+    function playVoice(key) {
+      if (sounds[key]) {
+        sounds[key].currentTime = 0;
+        sounds[key].play();
+      }
+    }
+
+    function updateText(text, seconds, voiceKey, callback) {
+      instruction.classList.add('hidden');
+      timer.classList.add('hidden');
+      clearInterval(countdownInterval);
+      setTimeout(() => {
+        instruction.textContent = text;
+        timer.textContent = `Time: ${seconds}s`;
+        instruction.classList.remove('hidden');
+        timer.classList.remove('hidden');
+        if (voiceKey) playVoice(voiceKey);
+
+        let remaining = seconds;
+        countdownInterval = setInterval(() => {
+          timer.textContent = `Time: ${remaining}s`;
+          if (--remaining < 0) {
+            clearInterval(countdownInterval);
+            if (callback) callback();
+          }
+        }, 1000);
+      }, 400);
+    }
+
+    function startExercise() {
+      totalCycles = parseInt(document.getElementById('cycle-count').value) || 3;
+      isStopped = false;
+      startBtn.style.display = 'none';
+      stopBtn.style.display = 'inline-block';
+      cycle = 0;
+      beginCycle();
+    }
+
+    function beginCycle() {
+      if (isStopped || cycle >= totalCycles) {
+        updateText("Well done!", 0);
+        return;
+      }
+
+      updateText("Get ready...", 3, 'getready', () => {
+        if (isStopped) return;
+
+        cycle++;
+        circle.style.transition = 'transform 4s ease-in-out';
+        circle.style.transform = 'scale(1.5)';
+        updateText("Inhale...", 4, 'inhale', () => {
+          if (isStopped) return;
+
+          updateText("Hold...", 7, 'hold', () => {
+            if (isStopped) return;
+
+            circle.style.transition = 'transform 8s ease-in-out';
+            circle.style.transform = 'scale(1)';
+            updateText("Exhale...", 8, 'exhale', () => {
+              if (!isStopped) beginCycle();
+            });
+          });
+        });
+      });
+    }
+
+    function stopExercise() {
+      isStopped = true;
+      clearInterval(countdownInterval);
+      location.reload();
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+

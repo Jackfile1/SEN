@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualization - Autumn Leafy Path</title>
+  <style>
+    :root {
+      --bg1: #0f0c29;
+      --bg2: #302b63;
+      --bg3: #24243e;
+      --text: #e0dff0;
+      --accent: #a78bfa;
+      --accent-bright: #c084fc;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      padding: 1.5rem;
+      background: url('assets/Path.mp4') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+    }
+
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      opacity: 0.7;
+      transition: opacity 3s ease-in-out;
+    }
+
+    .overlay {
+      background: rgba(15, 12, 40, 0.75);
+      padding: 2rem;
+      border-radius: 1.5rem;
+      max-width: 600px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      z-index: 1;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
+      opacity: 0;
+      animation: fadeIn 4s ease-in-out forwards;
+    }
+
+    /* Fixed-size box for the text with fixed width and height */
+    #visual-text {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      animation: fadeIn 4s ease-in-out forwards;
+      width: 600px; /* Set the fixed width */
+      height: 120px; /* Set a fixed height */
+      overflow-y: auto; /* Enable scrolling if content overflows */
+      padding-right: 10px; /* Space for scrollbar */
+      margin: 0 auto; /* Center the text */
+      word-wrap: break-word; /* Prevent text from overflowing out of the box */
+    }
+
+    .btn {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      margin-top: 1.25rem;
+      font-size: 1rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-bright);
+    }
+
+    audio {
+      display: none;
+    }
+
+    .falling {
+      position: absolute;
+      top: -10%;
+      opacity: 0.8;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% { top: -10%; opacity: 1; }
+      100% { top: 110%; opacity: 0; }
+    }
+
+    /* Fade-in animation */
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .volume-control {
+      margin-top: 1rem;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .volume-slider {
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+      .overlay {
+        padding: 1.5rem;
+      }
+      h2 {
+        font-size: 1.5rem;
+      }
+      #visual-text {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <video autoplay muted loop playsinline id="bg-video">
+    <source src="file:///C:/Users/Gr00c/OneDrive/Desktop/SENdev/Forrest/Path.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Randomized Falling Leaves -->
+  <div class="falling" style="left: 10%; animation-duration: 12s; animation-delay: 0s;">🍂</div>
+  <div class="falling" style="left: 50%; animation-duration: 8s; animation-delay: 2s;">🍁</div>
+  <div class="falling" style="left: 80%; animation-duration: 14s; animation-delay: 4s;">🍃</div>
+
+  <!-- Randomized Falling Acorns -->
+  <div class="falling" style="left: 20%; animation-duration: 11s; animation-delay: 6s;">🌰</div>
+  <div class="falling" style="left: 70%; animation-duration: 9s; animation-delay: 8s;">🌰</div>
+
+  <!-- Randomized Falling Branches -->
+  <div class="falling" style="left: 30%; animation-duration: 15s; animation-delay: 10s;">🌿</div>
+  <div class="falling" style="left: 60%; animation-duration: 13s; animation-delay: 12s;">🌿</div>
+
+  <!-- Randomized Falling Pinecones -->
+  <div class="falling" style="left: 40%; animation-duration: 17s; animation-delay: 14s;">🌲</div>
+  <div class="falling" style="left: 90%; animation-duration: 18s; animation-delay: 16s;">🌲</div>
+
+  <div class="overlay">
+    <h2>Autumn Leafy Path Visualization</h2>
+    <p id="visual-text"></p>
+    <button class="btn" onclick="startVisualization()">Start Visualization</button>
+    <button class="btn" onclick="endVisualization()">End Session</button>
+
+    <!-- Volume Controls -->
+    <div class="volume-control">
+      <label for="forestVolumeSlider">Forest Sound Volume:</label>
+      <input type="range" id="forestVolumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="0.8">
+    </div>
+    <div class="volume-control">
+      <label for="windVolumeSlider">Wind Sound Volume:</label>
+      <input type="range" id="windVolumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="0.8">
+    </div>
+  </div>
+
+  <audio id="forestAudio" src="sounds/Forrest.mp3" loop></audio>
+  <audio id="windAudio" src="sounds/Wind.mp3" loop></audio>
+
+  <script>
+    const textElement = document.getElementById('visual-text');
+    const audioForrest = document.getElementById('forestAudio');
+    const audioWind = document.getElementById('windAudio');
+    const forestVolumeSlider = document.getElementById('forestVolumeSlider');
+    const windVolumeSlider = document.getElementById('windVolumeSlider');
+
+    // Story Prompts
+    const prompts = [
+      "You step onto a soft, leaf-covered path...",
+      "The sound of your footsteps is gentle, muffled by the fallen leaves...",
+      "You look up to see tall trees surrounding you, their leaves swaying softly...",
+      "A gentle breeze rustles the branches overhead...",
+      "You feel at peace as you walk along the path, surrounded by nature's beauty...",
+      "The earthy smell of the forest fills the air, fresh and calming...",
+      "You take a deep breath, feeling grounded and connected to this peaceful place..."
+    ];
+
+    let index = 0;
+    let interval;
+
+    function startVisualization() {
+      index = 0;
+      textElement.style.opacity = 1;
+      audioForrest.play();
+      audioWind.play();
+      textElement.textContent = prompts[index];
+
+      interval = setInterval(() => {
+        index++;
+        if (index >= prompts.length) {
+          clearInterval(interval);
+        } else {
+          textElement.style.opacity = 0;
+          setTimeout(() => {
+            textElement.textContent = prompts[index];
+            textElement.style.opacity = 1;
+          }, 500);
+        }
+      }, 7000);
+    }
+
+    function endVisualization() {
+      clearInterval(interval);
+      textElement.textContent = "Session ended. Feel free to return here anytime.";
+      audioForrest.pause();
+      audioWind.pause();
+      audioForrest.currentTime = 0;
+      audioWind.currentTime = 0;
+    }
+
+    // Volume control for each sound
+    forestVolumeSlider.addEventListener('input', (event) => {
+      audioForrest.volume = event.target.value;
+    });
+
+    windVolumeSlider.addEventListener('input', (event) => {
+      audioWind.volume = event.target.value;
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

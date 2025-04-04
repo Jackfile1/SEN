@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome - Well-being App</title>
+  <style>
+    :root {
+      --bg1: #0f0c29;
+      --bg2: #302b63;
+      --bg3: #24243e;
+      --text: #e0dff0;
+      --accent: #a78bfa;
+      --accent-bright: #c084fc;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3));
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      color: var(--text);
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    header, footer {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(15, 12, 40, 0.95);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      width: 100%;
+      color: var(--text);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    #home-page {
+      background: rgba(25, 20, 45, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 2rem;
+      border-radius: 1.25rem;
+      box-shadow: 0 0 30px rgba(167, 139, 250, 0.2);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    h1 {
+      color: var(--accent);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.875rem;
+      margin-bottom: 0.625rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1rem;
+      color: #bbb;
+      margin: 1.25rem 0 0.625rem;
+    }
+
+    label {
+      font-size: 1rem;
+      color: var(--text);
+      margin: 0.5rem 0 0.25rem;
+      display: block;
+      text-align: left;
+    }
+
+    select, input {
+      padding: 0.75rem;
+      margin-top: 0.625rem;
+      width: 100%;
+      border-radius: 0.625rem;
+      font-size: 1rem;
+      border: 1px solid #555;
+      background: #1a1a2e;
+      color: var(--text);
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: var(--accent);
+      color: #fff;
+      font-weight: bold;
+      padding: 0.75rem;
+      margin-top: 0.625rem;
+      width: 100%;
+      border: none;
+      border-radius: 0.625rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: var(--accent-bright);
+      transform: translateY(-0.125rem);
+    }
+
+    button:active {
+      background-color: #9f7aea;
+      transform: translateY(0.125rem);
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(15, 12, 40, 0.95);
+      display: flex;
+      justify-content: space-around;
+      padding: 0.75rem 0;
+      z-index: 1000;
+    }
+
+    .bottom-nav a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Well-being App</h1>
+  </header>
+  <main>
+    <div id="home-page" role="form" aria-labelledby="login-heading">
+      <h1 id="login-heading">Welcome!</h1>
+      <h2>Please log in</h2>
+      <div class="login-options">
+        <label for="existing-profile">Child Login (Select Profile):</label>
+        <select id="existing-profile" aria-label="Select child profile">
+          <option value="">--Select a Profile--</option>
+        </select>
+        <button onclick="childLogin()" aria-label="Log In as Child">Log In as Child</button>
+        <h3>Or</h3>
+        <label for="carer-password">Carer Login (Enter Password):</label>
+        <input type="password" id="carer-password" placeholder="Enter carer password" aria-label="Carer password" />
+        <button onclick="carerLogin()" aria-label="Log In as Carer">Log In as Carer</button>
+        <h3>Need a moment to relax?</h3>
+        <button onclick="window.location.href='calm-corner.html'" aria-label="Go to Calm Corner">Go to Calm Corner 🌿</button>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <small>&copy; 2025 Your App Name</small>
+  </footer>
+  <nav class="bottom-nav">
+    <a href="index.html" aria-label="Home">Home</a>
+    <a href="profile.html" aria-label="Profile">Profile</a>
+    <a href="therapeutic-tools.html" aria-label="Therapeutic Tools">Tools</a>
+    <a href="calm-corner.html" aria-label="Calm Corner">Calm</a>
+  </nav>
+  <script>
+    function populateProfiles() {
+      const profiles = JSON.parse(localStorage.getItem('children')) || [];
+      const dropdown = document.getElementById('existing-profile');
+      profiles.forEach(profile => {
+        const option = document.createElement('option');
+        option.value = profile.name;
+        option.textContent = profile.name;
+        dropdown.appendChild(option);
+      });
+    }
+
+    function childLogin() {
+      const selected = document.getElementById('existing-profile').value;
+      if (!selected) {
+        alert("Please select a profile!");
+        return;
+      }
+      localStorage.setItem('childName', selected);
+      window.location.href = 'profile.html';
+    }
+
+    function carerLogin() {
+      const pass = document.getElementById('carer-password').value;
+      if (pass === 'carer123') {
+        window.location.href = 'carer_overview.html';
+      } else {
+        alert("Incorrect password. Please try again.");
+      }
+    }
+
+    window.onload = populateProfiles;
+  </script>
+</body>
+</html>
+

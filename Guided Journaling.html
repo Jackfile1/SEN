@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guided Journaling</title>
+  <style>
+    :root {
+      --bg1: #0f0c29;
+      --bg2: #302b63;
+      --bg3: #24243e;
+      --text: #e0dff0;
+      --accent: #a78bfa;
+      --accent-bright: #c084fc;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3));
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      margin: 0;
+      padding: 2rem 1rem 6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    header, footer {
+      width: 100%;
+      text-align: center;
+      padding: 1rem;
+      background: rgba(15, 12, 40, 0.95);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    header h1, footer small {
+      color: var(--text);
+    }
+
+    main {
+      width: 100%;
+      max-width: 700px;
+      padding: 2rem;
+      background: rgba(20, 18, 40, 0.95);
+      border-radius: 1.5rem;
+      box-shadow: 0 0 30px rgba(167, 139, 250, 0.1);
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    h2 {
+      color: var(--accent);
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .prompt-section {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: 1rem;
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--accent);
+    }
+
+    .text-box {
+      width: 100%;
+      height: 200px;
+      padding: 1rem;
+      font-size: 1rem;
+      background-color: #1e1c29;
+      color: var(--text);
+      border-radius: 1rem;
+      border: 1px solid var(--accent);
+      margin-bottom: 1.5rem;
+      resize: none;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .controls button, .controls input {
+      background-color: var(--accent);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 0.75rem;
+      margin-top: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+      max-width: 250px;
+    }
+
+    .controls button:hover {
+      background: var(--accent-bright);
+    }
+
+    .timer-box {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 1rem;
+      margin-top: 1rem;
+      font-size: 2rem;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 15px rgba(167, 139, 250, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(15, 12, 40, 0.95);
+      border-top: 1px solid #333;
+      display: flex;
+      justify-content: space-around;
+      padding: 0.5rem 0;
+      z-index: 1000;
+    }
+
+    .bottom-nav a {
+      text-decoration: none;
+      font-size: 1rem;
+      color: var(--accent);
+      flex: 1;
+      text-align: center;
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header><h1>Well-being App</h1></header>
+
+  <main>
+    <h2>Guided Journaling</h2>
+    <p>Reflect, relax, and write your thoughts. Follow the prompts below or write freely.</p>
+
+    <div class="prompt-section">
+      <h3>Prompt</h3>
+      <p id="journaling-prompt">How are you feeling today? Write about your thoughts and emotions.</p>
+    </div>
+
+    <textarea class="text-box" placeholder="Start writing here..."></textarea>
+
+    <div class="controls">
+      <button onclick="saveEntry()">Save Entry</button>
+      <button onclick="clearEntry()">Clear Entry</button>
+
+      <label for="journaling-timer">Set Timer (minutes):</label>
+      <input type="number" id="journaling-timer" min="1" value="10">
+
+      <button onclick="startJournalingTimer()">Start Timer</button>
+    </div>
+
+    <div class="timer-box" id="timer-display">00:00</div>
+  </main>
+
+  <footer><small>&copy; 2025 Your App Name</small></footer>
+
+  <nav class="bottom-nav">
+    <a href="index.html" aria-label="Home">Home</a>
+    <a href="profile.html" aria-label="Profile">Profile</a>
+    <a href="therapeutic-tools.html" aria-label="Therapeutic Tools">Tools</a>
+    <a href="calm-corner.html" aria-label="Calm Corner">Calm</a>
+  </nav>
+
+  <script>
+    let timerInterval;
+
+    function startJournalingTimer() {
+      const timerValue = document.getElementById('journaling-timer').value * 60 * 1000; // Convert minutes to ms
+      const timerDisplay = document.getElementById('timer-display');
+
+      let remainingTime = timerValue;
+      timerInterval = setInterval(() => {
+        remainingTime -= 1000;
+        const minutes = Math.floor(remainingTime / 60000);
+        const seconds = Math.floor((remainingTime % 60000) / 1000);
+        timerDisplay.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        if (remainingTime <= 0) {
+          clearInterval(timerInterval);
+          alert('Time is up! Please finish your entry.');
+        }
+      }, 1000);
+    }
+
+    function saveEntry() {
+      const entryText = document.querySelector('.text-box').value;
+      if (entryText) {
+        alert("Your journal entry has been saved!");
+        // Optionally save it to localStorage or server
+      } else {
+        alert("Please write something in the journal before saving.");
+      }
+    }
+
+    function clearEntry() {
+      document.querySelector('.text-box').value = '';
+      alert("Journal entry cleared!");
+    }
+  </script>
+</body>
+</html>

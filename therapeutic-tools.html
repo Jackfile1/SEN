@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Therapeutic Tools</title>
+  <style>
+    :root {
+      --bg1: #0f0c29;
+      --bg2: #302b63;
+      --bg3: #24243e;
+      --text: #e0dff0;
+      --accent: #a78bfa;
+      --accent-bright: #c084fc;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3));
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      margin: 0;
+      padding-bottom: 4rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      color: var(--text);
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    header, footer {
+      width: 100%;
+      text-align: center;
+      padding: 1rem;
+      background: rgba(15, 12, 40, 0.95);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    header h1, footer small {
+      color: var(--text);
+    }
+
+    main {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    #therapeutic-tools-page {
+      background-color: rgba(25, 20, 45, 0.9);
+      padding: 1.5rem;
+      border-radius: 1.25rem;
+      box-shadow: 0 0 20px rgba(167, 139, 250, 0.1);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      overflow-y: auto;
+      max-height: 80vh;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1rem;
+      color: var(--text);
+      margin: 0.625rem 0;
+    }
+
+    .tool-list {
+      margin-top: 1.25rem;
+      text-align: left;
+    }
+
+    .tool-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .tool-list li {
+      margin-bottom: 1rem;
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid #555;
+    }
+
+    .tool-list li h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.2rem;
+      color: var(--accent);
+    }
+
+    .tool-list li p {
+      font-size: 0.95rem;
+      margin: 0 0 0.5rem;
+      color: var(--text);
+    }
+
+    .tool-button, .navigation-buttons button {
+      background-color: var(--accent);
+      color: #fff;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 0.625rem;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1.1rem;
+      margin-top: 0.5rem;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .tool-button:hover, .navigation-buttons button:hover {
+      background-color: var(--accent-bright);
+      transform: translateY(-0.125rem);
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(15, 12, 40, 0.95);
+      border-top: 1px solid #333;
+      display: flex;
+      justify-content: space-around;
+      padding: 0.5rem 0;
+      z-index: 1000;
+    }
+
+    .bottom-nav a {
+      text-decoration: none;
+      font-size: 1rem;
+      color: var(--accent);
+      flex: 1;
+      text-align: center;
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Well-being App</h1>
+  </header>
+  <main>
+    <div id="therapeutic-tools-page" role="main" aria-labelledby="tools-heading">
+      <h2 id="tools-heading">Therapeutic Tools</h2>
+      <p>Discover exercises and strategies to boost your well-being:</p>
+      <div class="tool-list">
+        <ul>
+          <li>
+            <h3>Breathing Exercises</h3>
+            <p>Follow a guided breathing exercise to relax and refocus.</p>
+            <button class="tool-button" onclick="window.location.href='breathing-exercise.html'" aria-label="Start Breathing Exercise">Start Breathing Exercise</button>
+          </li>
+          <li>
+            <h3>Progressive Muscle Relaxation</h3>
+            <p>Tense and relax your muscles to reduce tension.</p>
+            <button class="tool-button" onclick="window.location.href='pmr.html'" aria-label="Start PMR">Start PMR</button>
+          </li>
+          <li>
+            <h3>DJ Maker</h3>
+            <p>Create your own calming music by layering and mixing sounds.</p>
+            <button class="tool-button" onclick="window.location.href='DJ Maker.html'" aria-label="Start DJ Maker">Start DJ Maker</button>
+          </li>
+          <li>
+            <h3>Visualization Exercise</h3>
+            <p>Imagine a peaceful scene to ease stress and anxiety.</p>
+            <button class="tool-button" onclick="window.location.href='visualization.html'" aria-label="Start Visualization Exercise">Start Visualization Exercise</button>
+          </li>
+          <li>
+            <h3>Guided Journaling</h3>
+            <p>Reflect on your day and express your feelings through writing.</p>
+            <button class="tool-button" onclick="window.location.href='journaling.html'" aria-label="Start Journaling">Start Journaling</button>
+          </li>
+        </ul>
+      </div>
+      <div class="navigation-buttons">
+        <button onclick="window.location.href='index.html'" aria-label="Go to Home">Go to Home</button>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <small>&copy; 2025 Your App Name</small>
+  </footer>
+  <nav class="bottom-nav">
+    <a href="index.html" aria-label="Home">Home</a>
+    <a href="profile.html" aria-label="Profile">Profile</a>
+    <a href="therapeutic-tools.html" aria-label="Therapeutic Tools">Tools</a>
+    <a href="calm-corner.html" aria-label="Calm Corner">Calm</a>
+  </nav>
+</body>
+</html>

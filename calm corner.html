@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calm Corner</title>
+  <!-- Howler.js for audio playback -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+  <style>
+    /* Base Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom right, #dbeafe, #e0f2f1);
+      margin: 0;
+      padding-bottom: 4rem; /* Reserve space for bottom navigation */
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    header, footer {
+      text-align: center;
+      padding: 1rem;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      width: 100%;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    /* Calm Corner Card */
+    #calm-corner {
+      background-color: white;
+      padding: 2rem;
+      margin-top: 1.875rem;
+      border-radius: 1.25rem;
+      box-shadow: 0 0.625rem 1.875rem rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 700px;
+      text-align: center;
+      display: none; /* Hidden until user unlocks audio */
+      margin-bottom: 4rem;
+    }
+    h2 {
+      font-size: 1.75rem;
+      color: #4CAF50;
+      font-family: 'Montserrat', sans-serif;
+      margin-bottom: 1.25rem;
+    }
+    .breathing-box {
+      margin: 1.875rem auto;
+      width: 12.5rem;
+      height: 12.5rem;
+      border-radius: 50%;
+      background: radial-gradient(circle, #a5d6a7, #4CAF50);
+      animation: breathe 8s ease-in-out infinite;
+    }
+    @keyframes breathe {
+      0% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.6; }
+    }
+    .instructions {
+      font-size: 1rem;
+      color: #333;
+      margin-top: 0.9375rem;
+    }
+    .sound-controls {
+      margin-top: 2.5rem;
+    }
+    .sound-controls button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      margin: 0.625rem;
+      border: none;
+      border-radius: 0.625rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .sound-controls button:hover {
+      background-color: #45a049;
+    }
+    .now-playing {
+      margin-top: 0.625rem;
+      font-size: 0.875rem;
+      color: #4CAF50;
+    }
+    .navigation-buttons {
+      margin-top: 1.875rem;
+    }
+    .navigation-buttons button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 0.625rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .navigation-buttons button:hover {
+      background-color: #45a049;
+    }
+    /* Overlay for unlocking audio on mobile */
+    #click-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.95);
+      z-index: 999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.25rem;
+      color: #4CAF50;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #fff;
+      border-top: 1px solid #ccc;
+      display: flex;
+      justify-content: space-around;
+      padding: 0.5rem 0;
+      z-index: 1000;
+    }
+    .bottom-nav a {
+      text-decoration: none;
+      font-size: 1rem;
+      color: #4CAF50;
+      flex: 1;
+      text-align: center;
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Well-being App</h1>
+  </header>
+  
+  <!-- Overlay: Tap to unlock audio (required by mobile browsers) -->
+  <div id="click-overlay" aria-label="Tap to load sounds">Tap to load sounds...</div>
+  
+  <main>
+    <div id="calm-corner" role="main" aria-labelledby="calm-heading">
+      <h2 id="calm-heading">Calm Corner</h2>
+      <div class="breathing-box"></div>
+      <p class="instructions">Breathe in as the circle grows... and breathe out as it shrinks.</p>
+      <div class="sound-controls">
+        <button onclick="playSound('sound1')" aria-label="Play Sound 1">Sound 1</button>
+        <button onclick="playSound('sound2')" aria-label="Play Sound 2">Sound 2</button>
+        <button onclick="playSound('sound3')" aria-label="Play Sound 3">Sound 3</button>
+        <button onclick="playSound('sound4')" aria-label="Play Sound 4">Sound 4</button>
+        <button onclick="playSound('sound5')" aria-label="Play Sound 5">Sound 5</button>
+        <button onclick="playSound('sound6')" aria-label="Play Sound 6">Sound 6</button>
+        <button onclick="playSound('sound7')" aria-label="Play Sound 7">Sound 7</button>
+        <button onclick="stopSound()" id="stop" aria-label="Stop Sound">⏹ Stop</button>
+        <div class="now-playing" id="now-playing">No sound playing</div>
+      </div>
+      <div class="navigation-buttons">
+        <button onclick="window.location.href='index.html'" aria-label="Back to Home">← Back to Home</button>
+      </div>
+    </div>
+  </main>
+  
+  <footer>
+    <small>&copy; 2025 Your App Name</small>
+  </footer>
+  
+  <nav class="bottom-nav">
+    <a href="index.html" aria-label="Home">Home</a>
+    <a href="profile.html" aria-label="Profile">Profile</a>
+    <a href="therapeutic-tools.html" aria-label="Therapeutic Tools">Tools</a>
+    <a href="calm-corner.html" aria-label="Calm Corner">Calm</a>
+  </nav>
+  
+  <!-- Howler.js: Create Howl objects for each sound -->
+  <script>
+    // Create Howl instances for each sound file
+    const sounds = {
+      sound1: new Howl({ src: ['sounds/sound1.mp3'], loop: true }),
+      sound2: new Howl({ src: ['sounds/sound2.mp3'], loop: true }),
+      sound3: new Howl({ src: ['sounds/sound3.mp3'], loop: true }),
+      sound4: new Howl({ src: ['sounds/sound4.mp3'], loop: true }),
+      sound5: new Howl({ src: ['sounds/sound5.mp3'], loop: true }),
+      sound6: new Howl({ src: ['sounds/sound6.mp3'], loop: true }),
+      sound7: new Howl({ src: ['sounds/sound7.mp3'], loop: true })
+    };
+
+    let currentSound = null;
+
+    // Function to play a specified sound using Howler.js
+    function playSound(id) {
+      stopSound(); // Stop any currently playing sound
+      currentSound = sounds[id];
+      if (currentSound) {
+        currentSound.play();
+        document.getElementById('now-playing').textContent = 'Now Playing: ' + id.toUpperCase();
+        console.log('Playing sound:', id);
+      }
+    }
+
+    // Function to stop the current sound
+    function stopSound() {
+      if (currentSound) {
+        currentSound.stop();
+        currentSound = null;
+        document.getElementById('now-playing').textContent = 'No sound playing';
+        console.log('Stopped sound');
+      }
+    }
+
+    // Unlock audio on mobile: When the overlay is tapped, hide it and show the Calm Corner.
+    document.getElementById('click-overlay').addEventListener('click', function() {
+      this.style.display = 'none';
+      document.getElementById('calm-corner').style.display = 'block';
+    });
+  </script>
+</body>
+</html>

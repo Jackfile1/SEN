@@ -12,6 +12,9 @@
       --text: #e0dff0;
       --accent: #a78bfa;
       --accent-bright: #c084fc;
+      --input-bg: #1e1c29;
+      --button-bg: #a78bfa;
+      --button-hover-bg: #c084fc;
     }
     body {
       font-family: 'Poppins', sans-serif;
@@ -42,6 +45,10 @@
       display: flex; align-items: center; justify-content: center;
       color: var(--accent); font-size: 1.5rem;
       cursor: pointer;
+      transition: box-shadow 0.3s ease-in-out;
+    }
+    .turntable-placeholder:hover {
+      box-shadow: 0 0 20px var(--accent-bright), inset 0 0 10px var(--accent);
     }
     .soundboard, .timeline {
       display: flex; gap: 1rem; flex-wrap: wrap;
@@ -65,22 +72,9 @@
       transform: scale(1.03);
       box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
     }
-    .sound-item.drag-over {
-      background: rgba(255, 255, 255, 0.1);
-      border: 2px dashed var(--accent-bright);
-    }
-    .sound-item.playing {
-      border-color: var(--accent-bright);
-      box-shadow: 0 0 10px var(--accent-bright);
-    }
-    .drag-handle {
-      cursor: grab;
-      font-size: 1.2rem;
-      margin-bottom: 0.25rem;
-      color: var(--accent);
-    }
-    .sound-item button {
-      margin-top: 0.5rem; width: 100%;
+    .sound-item:active {
+      opacity: 0.6;
+      transform: scale(0.97);
     }
     .progress-bar {
       height: 6px;
@@ -91,28 +85,105 @@
     }
     .volume-slider {
       width: 100%;
-      margin-top: 0.5rem;
+      margin-top: 0.25rem;
     }
     .controls {
-      display: flex; flex-wrap: wrap;
-      justify-content: center; gap: 0.5rem;
-      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
     }
+
+    /* Styling for Play, Pause, Clear buttons */
     .controls button {
-      background: var(--accent); color: white;
-      border: none; padding: 0.75rem 1.5rem;
-      border-radius: 0.75rem;
-      cursor: pointer; flex: 1 1 40%; max-width: 200px;
-      transition: background 0.2s;
+      background: var(--button-bg);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 1.5rem;  /* Increased roundness for a modern look */
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      font-size: 1.2rem;  /* Adjusted font size */
+      transition: background 0.3s, transform 0.2s;
+      flex: 1;
     }
-    .controls button:disabled {
-      background: #555; cursor: not-allowed;
+
+    .controls button:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
     }
+
     .controls button:active {
-      background: var(--accent-bright);
+      background-color: var(--button-bg);
+      transform: translateY(2px);
     }
+
+    .controls button:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+
+    /* Styling for Save/Load Remix Controls */
+    .save-remix-panel {
+      margin-top: 2rem;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      background-color: var(--input-bg);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .save-remix-panel h3 {
+      color: var(--accent);
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+    }
+    .save-remix-panel input, .save-remix-panel select, .save-remix-panel button {
+      width: 80%;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 0.5rem;
+      border: 2px solid var(--accent);
+      background-color: var(--input-bg);
+      color: var(--text);
+      font-size: 1rem;
+      transition: background-color 0.3s;
+    }
+
+    .save-remix-panel input:focus, .save-remix-panel select:focus, .save-remix-panel button:focus {
+      outline: none;
+      border-color: var(--accent-bright);
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .save-remix-panel button {
+      background-color: var(--button-bg);
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .save-remix-panel button:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    .save-remix-panel button:active {
+      background-color: var(--button-bg);
+      transform: translateY(2px);
+    }
+
+    /* Ensuring mobile-friendliness */
     @media (max-width: 600px) {
-      .sound-item { width: 100%; }
+      .save-remix-panel input, .save-remix-panel select, .save-remix-panel button {
+        width: 90%;
+      }
     }
   </style>
 </head>
@@ -123,15 +194,27 @@
   <div class="soundboard" id="soundboard"></div>
   <h3>Timeline</h3>
   <div class="timeline" id="timeline"></div>
+
   <div class="controls">
     <button id="playBtn" type="button">Play Timeline</button>
     <button id="pauseBtn" type="button">Pause</button>
     <button id="clearBtn" type="button">Clear</button>
   </div>
 
+  <div class="save-remix-panel">
+    <h3>💾 Save / Remix Your Mix</h3>
+    <input id="mixName" type="text" placeholder="Enter mix name...">
+    <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+      <button onclick="saveMix()">Save Mix</button>
+      <button onclick="loadSelectedMix()">Load Selected</button>
+      <button onclick="deleteSelectedMix()">Delete Selected</button>
+    </div>
+    <select id="savedMixes"></select>
+  </div>
+
   <script>
+    // Your existing script logic goes here. Just ensure the save/load functionality and buttons work as expected.
     const basePath = "./DJ/";
-    const scratchSounds = ["dj-scratch", "scratch", "scratch2"];
     const soundList = [
       "beat-of-time", "beats", "break-boom", "cool-drum", "dholki",
       "dj-scratch", "dj-scratch2", "drum-beat", "drum-loop", "drum-loop-beat",
@@ -148,23 +231,7 @@
     const clearBtn = document.getElementById("clearBtn");
 
     let timelineQueue = [];
-    let currentIndex = 0;
-    let currentAudio = null;
-    let loopAudios = [];
     let isPlaying = false;
-
-    playBtn.addEventListener("click", playTimeline);
-    pauseBtn.addEventListener("click", () => {
-      if (currentAudio) currentAudio.pause();
-      loopAudios.forEach(a => a.pause());
-      isPlaying = false;
-      playBtn.disabled = false;
-    });
-    clearBtn.addEventListener("click", () => {
-      stopAll();
-      timelineQueue = [];
-      renderTimeline();
-    });
 
     const soundElements = {};
 
@@ -213,47 +280,55 @@
     timeline.addEventListener("drop", e => {
       const name = e.dataTransfer.getData("text/plain");
       if (name) {
-        timelineQueue.push({ name, loop: false });
+        timelineQueue.push({ name, loop: false, start: 0, track: 1 });
         renderTimeline();
       }
     });
 
     function renderTimeline() {
       timeline.innerHTML = "";
+      const tracks = {};
       timelineQueue.forEach((item, index) => {
+        const trackNum = item.track || 1;
+        if (!tracks[trackNum]) {
+          const trackContainer = document.createElement("div");
+          trackContainer.className = "track-row";
+          trackContainer.dataset.track = trackNum;
+          trackContainer.style.borderTop = "1px solid var(--accent)";
+          trackContainer.style.paddingTop = "0.5rem";
+          trackContainer.style.marginTop = "0.5rem";
+          tracks[trackNum] = trackContainer;
+          timeline.appendChild(trackContainer);
+        }
+
         const div = document.createElement("div");
         div.className = "sound-item";
         div.draggable = true;
         div.innerHTML = `
           <div class="drag-handle">≡</div>
           <div>${item.name}</div>
-          <label><input type="checkbox" onchange="timelineQueue[${index}].loop=this.checked"> Loop</label>
+          <label>Start: <input type="number" value="${parseFloat(item.start) || 0}" min="0" step="0.1" onchange="timelineQueue[${index}].start = parseFloat(this.value); renderTimeline();">s</label>
+          <label>Track: <input type="number" value="${parseInt(item.track) || 1}" min="1" step="1" onchange="timelineQueue[${index}].track = parseInt(this.value); renderTimeline();"></label>
+          <label><input type="checkbox" ${item.loop ? 'checked' : ''} onchange="timelineQueue[${index}].loop = this.checked;"> Loop</label>
           <div class="progress-bar"></div>
           <div class="visualizer" id="viz-${index}" style="height:6px;background:#555;margin-top:4px;"></div>
         `;
         div.addEventListener("dragstart", e => e.dataTransfer.setData("timeline-index", index));
-        div.addEventListener("drop", e => {
-          const from = parseInt(e.dataTransfer.getData("timeline-index"));
-          if (!isNaN(from) && from !== index) {
-            const moved = timelineQueue.splice(from, 1)[0];
-            timelineQueue.splice(index, 0, moved);
-            renderTimeline();
-          }
-        });
-        timeline.appendChild(div);
+        tracks[item.track].appendChild(div);
       });
     }
+
+    playBtn.addEventListener("click", playTimeline);
+    pauseBtn.addEventListener("click", () => {
+      stopAll();
+    });
 
     function stopAll() {
       Object.values(soundElements).forEach(audio => {
         audio.pause();
         audio.currentTime = 0;
       });
-      loopAudios.forEach(a => a.pause());
-      loopAudios = [];
       isPlaying = false;
-      currentAudio = null;
-      currentIndex = 0;
       playBtn.disabled = false;
     }
 
@@ -262,43 +337,22 @@
       stopAll();
       isPlaying = true;
       playBtn.disabled = true;
-      playNext();
-    }
 
-    function playNext() {
-      if (currentIndex >= timelineQueue.length) {
-        isPlaying = false;
-        playBtn.disabled = false;
-        return;
-      }
+      timelineQueue.forEach((item, index) => {
+        const audio = new Audio(basePath + item.name + ".mp3");
+        audio.volume = 0.8;
 
-      const item = timelineQueue[currentIndex];
-      const audio = new Audio(basePath + item.name + ".mp3");
-      audio.volume = 0.8;
+        const soundDiv = timeline.children[index];
+        const progress = soundDiv.querySelector(".progress-bar");
+        const visualizer = soundDiv.querySelector(".visualizer");
+        soundDiv.classList.add("playing");
 
-      const soundDiv = timeline.children[currentIndex];
-      const progress = soundDiv.querySelector(".progress-bar");
-      const visualizer = soundDiv.querySelector(".visualizer");
-      soundDiv.classList.add("playing");
-
-      if (item.loop) {
-        audio.loop = true;
-        loopAudios.push(audio);
-        audio.play();
-        currentIndex++;
-        playNext();
-        return;
-      }
-
-      currentAudio = audio;
-      audio.onloadedmetadata = () => {
-        const duration = audio.duration;
         audio.play();
 
         const interval = setInterval(() => {
           if (!audio.paused) {
-            const percent = (audio.currentTime / duration) * 100;
-            progress.style.width = percent + "%";
+            const percent = (audio.currentTime / audio.duration) * 100;
+            progress.style.width = `${percent}%`;
             visualizer.style.background = `linear-gradient(to right, var(--accent) ${percent}%, #555 ${percent}%)`;
           }
         }, 100);
@@ -308,22 +362,54 @@
           progress.style.width = "0%";
           visualizer.style.background = "#555";
           soundDiv.classList.remove("playing");
-          currentIndex++;
-          playNext();
         };
-      };
+      });
     }
 
-    function triggerScratch() {
-      const sound = scratchSounds[Math.floor(Math.random() * scratchSounds.length)];
-      const audio = new Audio(basePath + sound + ".mp3");
-      audio.play();
+    function saveMix() {
+      const name = document.getElementById('mixName').value.trim();
+      if (!name) return alert("Please enter a mix name.");
+      localStorage.setItem(`djmix-${name}`, JSON.stringify(timelineQueue));
+      updateMixDropdown();
+      alert("Mix saved as '" + name + "'.");
     }
+
+    function loadSelectedMix() {
+      const sel = document.getElementById('savedMixes');
+      const name = sel.value;
+      const data = localStorage.getItem(name);
+      if (data) {
+        timelineQueue = JSON.parse(data);
+        renderTimeline();
+      }
+    }
+
+    function deleteSelectedMix() {
+      const sel = document.getElementById('savedMixes');
+      const name = sel.value;
+      if (confirm(`Delete mix '${name}'?`)) {
+        localStorage.removeItem(name);
+        updateMixDropdown();
+      }
+    }
+
+    function updateMixDropdown() {
+      const dropdown = document.getElementById('savedMixes');
+      dropdown.innerHTML = "";
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith("djmix-")) {
+          const option = document.createElement("option");
+          option.value = key;
+          option.textContent = key.replace("djmix-", "");
+          dropdown.appendChild(option);
+        }
+      });
+    }
+
+    updateMixDropdown();
   </script>
 </body>
 </html>
-
-
 
 
 

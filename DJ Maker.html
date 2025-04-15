@@ -38,6 +38,7 @@
       color: var(--accent);
       text-align: center;
     }
+    /* DJ Turntable styling */
     .turntable-placeholder {
       width: 100%; max-width: 500px; height: 200px;
       background: #1e1c29; border: 2px solid var(--accent);
@@ -45,85 +46,23 @@
       display: flex; align-items: center; justify-content: center;
       color: var(--accent); font-size: 1.5rem;
       cursor: pointer;
-      transition: box-shadow 0.3s ease-in-out;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease-in-out;
     }
     .turntable-placeholder:hover {
       box-shadow: 0 0 20px var(--accent-bright), inset 0 0 10px var(--accent);
     }
-    .soundboard, .timeline {
-      display: flex; gap: 1rem; flex-wrap: wrap;
-      margin: 1rem 0; justify-content: center;
+    /* Rotating effect when clicked */
+    .rotate {
+      animation: spin 1s linear infinite;
     }
-    .timeline {
-      border: 2px dashed var(--accent);
-      padding: 1rem; min-height: 100px; width: 100%; max-width: 900px;
-      box-sizing: border-box;
-    }
-    .sound-item {
-      background: #1e1c29; border: 1px solid var(--accent);
-      border-radius: 1rem; padding: 1rem;
-      text-align: center; width: 140px;
-      cursor: grab; box-sizing: border-box;
-      position: relative;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
-    }
-    .sound-item:hover {
-      transform: scale(1.03);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
-    }
-    .sound-item:active {
-      opacity: 0.6;
-      transform: scale(0.97);
-    }
-    .progress-bar {
-      height: 6px;
-      background: var(--accent);
-      margin-top: 6px;
-      width: 0%;
-      transition: width 0.1s;
-    }
-    .volume-slider {
-      width: 100%;
-      margin-top: 0.25rem;
-    }
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 2rem;
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
-    /* Styling for Play, Pause, Clear buttons */
-    .controls button {
-      background: var(--button-bg);
-      color: white;
-      border: none;
-      padding: 1rem 2rem;
-      border-radius: 1.5rem;  /* Increased roundness for a modern look */
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-      font-size: 1.2rem;  /* Adjusted font size */
-      transition: background 0.3s, transform 0.2s;
-      flex: 1;
-    }
-
-    .controls button:hover {
-      background-color: var(--button-hover-bg);
-      transform: translateY(-2px);
-    }
-
-    .controls button:active {
-      background-color: var(--button-bg);
-      transform: translateY(2px);
-    }
-
-    .controls button:disabled {
-      background: #555;
-      cursor: not-allowed;
-    }
-
-    /* Styling for Save/Load Remix Controls */
+    /* Save/Load Remix Panel */
     .save-remix-panel {
       margin-top: 2rem;
       max-width: 600px;
@@ -155,12 +94,6 @@
       transition: background-color 0.3s;
     }
 
-    .save-remix-panel input:focus, .save-remix-panel select:focus, .save-remix-panel button:focus {
-      outline: none;
-      border-color: var(--accent-bright);
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-
     .save-remix-panel button {
       background-color: var(--button-bg);
       color: white;
@@ -185,22 +118,98 @@
         width: 90%;
       }
     }
+
+    .soundboard, .timeline {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      margin: 1rem 0; justify-content: center;
+    }
+    .timeline {
+      border: 2px dashed var(--accent);
+      padding: 1rem; min-height: 100px; width: 100%; max-width: 900px;
+      box-sizing: border-box;
+    }
+    .sound-item {
+      background: #1e1c29; border: 1px solid var(--accent);
+      border-radius: 1rem; padding: 1rem;
+      text-align: center; width: 140px;
+      cursor: grab; box-sizing: border-box;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+    .sound-item:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+    }
+    .progress-bar {
+      height: 6px;
+      background: var(--accent);
+      margin-top: 6px;
+      width: 0%;
+      transition: width 0.1s;
+    }
+    .volume-slider {
+      width: 100%;
+      margin-top: 0.25rem;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    /* Styling for Play, Pause, Clear buttons */
+    .controls button {
+      background: var(--button-bg);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      font-size: 1.2rem;
+      transition: background 0.3s, transform 0.2s;
+      flex: 1;
+    }
+
+    .controls button:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    .controls button:active {
+      background-color: var(--button-bg);
+      transform: translateY(2px);
+    }
+
+    .controls button:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+
   </style>
 </head>
 <body>
   <h2>DJ Maker</h2>
   <p>Drag sounds to the timeline to create your mix!</p>
-  <div class="turntable-placeholder" onclick="triggerScratch()">🎧 DJ Turntables (Touch to Scratch!)</div>
+
+  <!-- Turntable area with rotating effect -->
+  <div class="turntable-placeholder" id="turntable" onclick="triggerScratch()">🎧 DJ Turntables (Touch to Scratch!)</div>
+
+  <!-- Soundboard and Timeline -->
   <div class="soundboard" id="soundboard"></div>
   <h3>Timeline</h3>
   <div class="timeline" id="timeline"></div>
 
+  <!-- Play/Pause/Reset Controls -->
   <div class="controls">
     <button id="playBtn" type="button">Play Timeline</button>
     <button id="pauseBtn" type="button">Pause</button>
     <button id="clearBtn" type="button">Clear</button>
   </div>
 
+  <!-- Save/Load Remix Panel -->
   <div class="save-remix-panel">
     <h3>💾 Save / Remix Your Mix</h3>
     <input id="mixName" type="text" placeholder="Enter mix name...">
@@ -213,7 +222,8 @@
   </div>
 
   <script>
-    // Your existing script logic goes here. Just ensure the save/load functionality and buttons work as expected.
+    // Scratch sound effects
+    const scratchSounds = ["dj-scratch", "scratch", "scratch2"];
     const basePath = "./DJ/";
     const soundList = [
       "beat-of-time", "beats", "break-boom", "cool-drum", "dholki",
@@ -341,28 +351,7 @@
       timelineQueue.forEach((item, index) => {
         const audio = new Audio(basePath + item.name + ".mp3");
         audio.volume = 0.8;
-
-        const soundDiv = timeline.children[index];
-        const progress = soundDiv.querySelector(".progress-bar");
-        const visualizer = soundDiv.querySelector(".visualizer");
-        soundDiv.classList.add("playing");
-
         audio.play();
-
-        const interval = setInterval(() => {
-          if (!audio.paused) {
-            const percent = (audio.currentTime / audio.duration) * 100;
-            progress.style.width = `${percent}%`;
-            visualizer.style.background = `linear-gradient(to right, var(--accent) ${percent}%, #555 ${percent}%)`;
-          }
-        }, 100);
-
-        audio.onended = () => {
-          clearInterval(interval);
-          progress.style.width = "0%";
-          visualizer.style.background = "#555";
-          soundDiv.classList.remove("playing");
-        };
       });
     }
 
@@ -410,8 +399,6 @@
   </script>
 </body>
 </html>
-
-
 
 
 
